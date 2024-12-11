@@ -72,8 +72,8 @@ jobs:
     - name: 关闭ANDROID_PARANOID_NETWORK配置
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
-        sed -i '/CONFIG_ANDROID_PARANOID_NETWORK/d' android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
-        echo "# CONFIG_ANDROID_PARANOID_NETWORK is not set" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+        sed -i '/CONFIG_ANDROID_PARANOID_NETWORK/d' android-kernel/arch/arm64/configs/alioth_defconfig
+        echo "# CONFIG_ANDROID_PARANOID_NETWORK is not set" >> android-kernel/arch/arm64/configs/alioth_defconfig
 
     - name: 开始编译内核
       run: |
