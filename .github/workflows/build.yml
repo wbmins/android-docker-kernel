@@ -42,7 +42,7 @@ jobs:
     - name: 下载内核源码
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
-        git clone https://github.com/liyafe1997/kernel_xiaomi_sm8250_mod -b android14-lineage21-mod android-kernel --depth=1
+        git clone https://github.com/txmins/kernel_xiaomi_sm8250_mod -b android14-lineage21-mod android-kernel --depth=1
 
     - name: 开启lxc和docker配置
       run: |
@@ -84,4 +84,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: AnyKernel3${{ env.UPLOADNAME }}-${{ env.DEVICE }}-${{ env.BUILD_TIME }}
-        path: kernel_workspace/android-kernel/Kernel_MIUI_alioth_NoKernelSU_*_anykernel3_*.zip
+        path: kernel_workspace/android-kernel/anykernel/*.zip
