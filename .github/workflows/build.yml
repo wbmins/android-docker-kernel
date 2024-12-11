@@ -51,9 +51,7 @@ jobs:
         chmod 777 LXC-DOCKER-OPEN-CONFIG.sh
         ./LXC-DOCKER-OPEN-CONFIG.sh android-kernel/arch/arm64/configs/alioth_defconfig -w
 
-      
     - name: 打入lxc补丁
-      if: env.LXC_PATCH == 'true'
       run: |
        cd $GITHUB_WORKSPACE/kernel_workspace
        wget https://raw.githubusercontent.com/tomxi1997/lxc-docker-support-for-android/refs/heads/main/runcpatch.sh
@@ -70,3 +68,14 @@ jobs:
          wget https://github.com/wu17481748/lxc-docker/releases/download/lxc/lxc.patch
          patch -p0 < lxc.patch
        fi
+
+    - name: 关闭ANDROID_PARANOID_NETWORK配置
+      run: |
+        cd $GITHUB_WORKSPACE/kernel_workspace
+        sed -i '/CONFIG_ANDROID_PARANOID_NETWORK/d' android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+        echo "# CONFIG_ANDROID_PARANOID_NETWORK is not set" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+
+    - name: 开始编译内核
+      run: |
+        cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
+        bash build.sh alioth
