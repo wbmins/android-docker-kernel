@@ -15,7 +15,7 @@ jobs:
       CCACHE_NOHASHDIR: "true"
       CCACHE_HARDLINK: "true"
     steps:
-    - name: 大容量空间支持
+    - name: 获取空间支持
       uses: easimon/maximize-build-space@master
       with:
           root-reserve-mb: 8192
@@ -24,3 +24,20 @@ jobs:
           remove-android: 'true'
           remove-haskell: 'true'
           remove-codeql: 'true'
+    - name: 构建编译环境
+      run: |
+        sudo apt-get update
+        sudo apt install build-essential git curl wget bison flex zip bc cpio libssl-dev ccache
+        mkdir -p $GITHUB_WORKSPACE/kernel_workspace
+    - name: 下载proton-clang
+      run: |
+        cd $GITHUB_WORKSPACE/kernel_workspace
+        mkdir proton-clang
+        cd proton-clang
+        wget https://github.com/kdrag0n/proton-clang/archive/refs/tags/20210522.zip
+        unzip 20210522.zip
+        echo $HOME
+    - name: 下载内核源码
+      run: |
+        cd $GITHUB_WORKSPACE/kernel_workspace
+        git clone https://github.com/liyafe1997/kernel_xiaomi_sm8250_mod -b android14-lineage21-mod android-kernel --depth=1
