@@ -24,11 +24,13 @@ jobs:
           remove-android: 'true'
           remove-haskell: 'true'
           remove-codeql: 'true'
+
     - name: 构建编译环境
       run: |
         sudo apt-get update
         sudo apt install build-essential git curl wget bison flex zip bc cpio libssl-dev ccache
         mkdir -p $GITHUB_WORKSPACE/kernel_workspace
+
     - name: 下载proton-clang
       run: |
         cd /home/runner
@@ -36,8 +38,35 @@ jobs:
         cd proton-clang
         wget https://github.com/kdrag0n/proton-clang/archive/refs/tags/20210522.zip
         unzip 20210522.zip
-        ls -al /home/runner/proton-clang/proton-clang-20210522
+        
     - name: 下载内核源码
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
         git clone https://github.com/liyafe1997/kernel_xiaomi_sm8250_mod -b android14-lineage21-mod android-kernel --depth=1
+
+    - name: 开启lxc和docker配置
+      run: |
+        cd $GITHUB_WORKSPACE/kernel_workspace
+        wget https://github.com/wu17481748/lxc-docker/releases/download/lxc-docker-2config/LXC-DOCKER-OPEN-CONFIG.sh
+        chmod 777 LXC-DOCKER-OPEN-CONFIG.sh
+        ./LXC-DOCKER-OPEN-CONFIG.sh android-kernel/arch/arm64/configs/alioth_defconfig -w
+
+      
+    - name: 打入lxc补丁
+      if: env.LXC_PATCH == 'true'
+      run: |
+       cd $GITHUB_WORKSPACE/kernel_workspace
+       wget https://raw.githubusercontent.com/tomxi1997/lxc-docker-support-for-android/refs/heads/main/runcpatch.sh
+       chmod a+x runcpatch.sh
+       if [ -f android-kernel/kernel/cgroup.c ]; then
+       ./runcpatch.sh android-kernel/kernel/cgroup.c               
+       fi
+       
+       if [ -f android-kernel/kernel/cgroup/cgroup.c ]; then
+       ./runcpatch.sh android-kernel/kernel/cgroup/cgroup.c               
+       fi
+       
+       if [ -f android-kernel/net/netfilter/xt_qtaguid.c ]; then
+         wget https://github.com/wu17481748/lxc-docker/releases/download/lxc/lxc.patch
+         patch -p0 < lxc.patch
+       fi
