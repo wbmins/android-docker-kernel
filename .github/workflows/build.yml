@@ -78,7 +78,7 @@ jobs:
     - name: 开始编译内核
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
-        bash build.sh alioth
+        bash build.sh alioth ksu
 
     - name: 上传Upload AnyKernel3
       uses: actions/upload-artifact@v3
