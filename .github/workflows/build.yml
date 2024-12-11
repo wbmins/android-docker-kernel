@@ -77,8 +77,8 @@ jobs:
 
     - name: 开始编译内核
       run: |
-        cat android-kernel/arch/arm64/configs/alioth_defconfig
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
+        cat arch/arm64/configs/alioth_defconfig
         bash build.sh alioth ksu
 
     - name: 上传Upload AnyKernel3
