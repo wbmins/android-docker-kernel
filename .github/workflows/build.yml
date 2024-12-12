@@ -44,9 +44,6 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
         git clone https://github.com/txmins/kernel_xiaomi_sm8250_mod -b android14-lineage21-mod android-kernel --depth=1
-        cd android-kernel
-        git clone https://github.com/lateautumn233/android_kernel_docker --depth=1 docker
-        sed -i '$a\source "docker/Kconfig"' arch/arm64/Kconfig
 
     - name: 开启lxc和docker配置
       run: |
