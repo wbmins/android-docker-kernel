@@ -1,4 +1,4 @@
-name: build
+name: 编译内核
 on:
   workflow_dispatch:
   watch:
@@ -79,7 +79,6 @@ jobs:
     - name: 开始编译内核
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
-        cat arch/arm64/configs/alioth_defconfig
         bash build.sh alioth ksu
 
     - name: 上传Upload AnyKernel3
