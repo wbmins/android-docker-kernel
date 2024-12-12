@@ -84,5 +84,5 @@ jobs:
     - name: 上传Upload AnyKernel3
       uses: actions/upload-artifact@v3
       with:
-        name: Lineageos_Kernel_Ksu_Docker_anykernel3.zip
+        name: Lineageos_Kernel_Ksu_Docker_anykernel3
         path: kernel_workspace/android-kernel/anykernel/*.zip
