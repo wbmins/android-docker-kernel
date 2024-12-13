@@ -118,7 +118,7 @@ jobs:
         cd $GITHUB_WORKSPACE/android-kernel
         rm -rf anykernel/kernels/
         mkdir -p anykernel/kernels/
-        cp out/arch/arm64/boot/* anykernel/kernels/
+        cp out/arch/arm64/boot/dts/{Image,dtb} anykernel/kernels/
 
 
     - name: 上传打包文件
