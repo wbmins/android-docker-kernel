@@ -97,21 +97,22 @@ jobs:
     - name: 开始编译内核
       run: |
         cd $GITHUB_WORKSPACE/android-kernel
-        MAKE_ARGS="ARCH=arm64 SUBARCH=arm64 O=out CC=clang CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CROSS_COMPILE_COMPAT=arm-linux-gnueabi- CLANG_TRIPLE=aarch64-linux-gnu-"
-        make $MAKE_ARGS alioth_defconfig
-        scripts/config --file out/.config -e KSU
-        make $MAKE_ARGS -j$(nproc --all)
+        echo $PATH
+    #     MAKE_ARGS="ARCH=arm64 SUBARCH=arm64 O=out CC=clang CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CROSS_COMPILE_COMPAT=arm-linux-gnueabi- CLANG_TRIPLE=aarch64-linux-gnu-"
+    #     make $MAKE_ARGS alioth_defconfig
+    #     scripts/config --file out/.config -e KSU
+    #     make $MAKE_ARGS -j$(nproc --all)
 
-    - name: 复制生成文件
-      run: |
-        cd $GITHUB_WORKSPACE/android-kernel
-        rm -rf anykernel/kernels/
-        mkdir -p anykernel/kernels/
-        cp out/arch/arm64/boot/* anykernel/kernels/
+    # - name: 复制生成文件
+    #   run: |
+    #     cd $GITHUB_WORKSPACE/android-kernel
+    #     rm -rf anykernel/kernels/
+    #     mkdir -p anykernel/kernels/
+    #     cp out/arch/arm64/boot/* anykernel/kernels/
 
 
-    - name: 上传打包文件
-      uses: actions/upload-artifact@v3
-      with:
-        name: Lineageos_Kernel_Ksu_Docker_anykernel3
-        path: $GITHUB_WORKSPACE/android-kernel/anykernel/*
+    # - name: 上传打包文件
+    #   uses: actions/upload-artifact@v3
+    #   with:
+    #     name: Lineageos_Kernel_Ksu_Docker_anykernel3
+    #     path: $GITHUB_WORKSPACE/android-kernel/anykernel/*
