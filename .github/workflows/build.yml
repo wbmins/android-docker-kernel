@@ -31,13 +31,23 @@ jobs:
         sudo apt-get update
         sudo apt install build-essential git curl wget bison flex zip bc cpio libssl-dev ccache
 
-    # - name: 缓存编译文件
-    #   uses: actions/cache@v3
-    #   with:
-    #     path: |
-    #       $GITHUB_WORKSPACE/proton-clang-20210522
+    - name: 缓存编译文件
+      id: cache-proton-clang
+      uses: actions/cache@v3
+      env:
+          cache-name: cache-proton-clang
+      with:
+        path: |
+          $GITHUB_WORKSPACE/proton-clang-20210522
+        key: ${{ runner.os }}-build-${{ env.cache-name }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-build-
+          ${{ runner.os }}-
 
-    - name: 配置编译环境
+    - if: ${{ steps.cache-proton-clang.outputs.cache-hit != 'true' }}
+      name: 配置编译环境
+      continue-on-error: true
       run: |
         cd $GITHUB_WORKSPACE
         wget https://github.com/kdrag0n/proton-clang/archive/refs/tags/20210522.zip
