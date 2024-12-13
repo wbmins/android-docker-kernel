@@ -39,11 +39,9 @@ jobs:
       with:
         path: |
           $GITHUB_WORKSPACE/proton-clang-20210522
-        key: ${{ runner.os }}-build-${{ env.cache-name }}
+        key: ${{ runner.os }}-${{ env.cache-name }}
         restore-keys: |
-          ${{ runner.os }}-build-${{ env.cache-name }}-
-          ${{ runner.os }}-build-
-          ${{ runner.os }}-
+          ${{ runner.os }}-${{ env.cache-name }}
 
     - if: ${{ steps.cache-proton-clang.outputs.cache-hit != 'true' }}
       name: 配置编译环境
