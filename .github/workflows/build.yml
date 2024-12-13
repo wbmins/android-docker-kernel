@@ -48,8 +48,11 @@ jobs:
         
     - name: 获取内核源码
       run: |
-        mkdir -p $GITHUB_WORKSPACE
+        cd $GITHUB_WORKSPACE
         git clone https://github.com/txmins/kernel_xiaomi_sm8250_mod -b android14-lineage21-mod android-kernel --depth=1
+        cd android-kernel
+        git clone https://github.com/lateautumn233/android_kernel_docker --depth=1 docker
+        sed -i '$a\source "docker/Kconfig"' arch/arm64/Kconfig
 
     - name: 开启补充配置
       run: |
