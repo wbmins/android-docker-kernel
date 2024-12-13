@@ -37,8 +37,7 @@ jobs:
       env:
           cache-name: cache-proton-clang
       with:
-        path: |
-          $GITHUB_WORKSPACE/proton-clang-20210522
+        path: $GITHUB_WORKSPACE/proton-clang-20210522
         key: ${{ runner.os }}-${{ env.cache-name }}
         restore-keys: |
           ${{ runner.os }}-${{ env.cache-name }}
@@ -116,7 +115,6 @@ jobs:
     - name: 复制生成文件
       run: |
         cd $GITHUB_WORKSPACE/android-kernel
-        rm -rf anykernel/kernels/
         mkdir -p anykernel/kernels/
         find out/arch/arm64/boot/dts -name '*.dtb' -exec cat {} + >out/arch/arm64/boot/dtb
         cp out/arch/arm64/boot/{Image,dtb} anykernel/kernels/
