@@ -36,13 +36,12 @@ jobs:
         cd $GITHUB_WORKSPACE
         wget https://github.com/kdrag0n/proton-clang/archive/refs/tags/20210522.zip
         unzip 20210522.zip
-        TOOLCHAIN_PATH=$GITHUB_WORKSPACE/proton-clang-20210522/bin
-        export PATH="$TOOLCHAIN_PATH:$PATH"
-        export CCACHE_DIR="$GITHUB_WORKSPACE/.cache/ccache_mikernel" 
-        export CC="ccache gcc"
-        export CXX="ccache g++"
-        export PATH="/usr/lib/ccache:$PATH"
-        echo $PATH
+
+    # - name: 缓存编译文件
+    #   uses: actions/cache@v3
+    #   with:
+    #     path: |
+    #       $GITHUB_WORKSPACE/proton-clang-20210522
 
     - name: 获取内核源码
       run: |
@@ -96,6 +95,12 @@ jobs:
     - name: 开始编译内核
       run: |
         cd $GITHUB_WORKSPACE/android-kernel
+        TOOLCHAIN_PATH=$GITHUB_WORKSPACE/proton-clang-20210522/bin
+        export PATH="$TOOLCHAIN_PATH:$PATH"
+        export CCACHE_DIR="$GITHUB_WORKSPACE/.cache/ccache_mikernel" 
+        export CC="ccache gcc"
+        export CXX="ccache g++"
+        export PATH="/usr/lib/ccache:$PATH"
         echo $PATH
     #     MAKE_ARGS="ARCH=arm64 SUBARCH=arm64 O=out CC=clang CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CROSS_COMPILE_COMPAT=arm-linux-gnueabi- CLANG_TRIPLE=aarch64-linux-gnu-"
     #     make $MAKE_ARGS alioth_defconfig
