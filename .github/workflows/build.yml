@@ -31,8 +31,8 @@ jobs:
     - name: 安装编译工具
       run: |
         uname -a
-        # sudo apt-get update
-        # sudo apt install build-essential git curl wget bison flex zip bc cpio libssl-dev ccache
+        sudo apt-get update
+        sudo apt install build-essential git curl wget bison flex zip bc cpio libssl-dev ccache
 
     # - name: 配置编译环境
     #   run: |
