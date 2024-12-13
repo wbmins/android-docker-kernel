@@ -30,7 +30,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt install build-essential git curl wget bison flex zip bc cpio libssl-dev ccache
-        uanem -a
+        uname -a
 
     # - name: 配置编译环境
     #   run: |
