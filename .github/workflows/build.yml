@@ -50,9 +50,7 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE
         git clone https://github.com/txmins/kernel_xiaomi_sm8250_mod -b android14-lineage21-mod android-kernel --depth=1
-        cd android-kernel
-        git clone https://github.com/lateautumn233/android_kernel_docker --depth=1 docker
-        sed -i '$a\source "docker/Kconfig"' arch/arm64/Kconfig
+        
 
     - name: 开启补充配置
       run: |
@@ -61,6 +59,9 @@ jobs:
         chmod 777 LXC-DOCKER-OPEN-CONFIG.sh
         ./LXC-DOCKER-OPEN-CONFIG.sh android-kernel/arch/arm64/configs/alioth_defconfig -w
         sed -i '/CONFIG_ANDROID_PARANOID_NETWORK/d' android-kernel/arch/arm64/configs/alioth_defconfig
+        cd android-kernel
+        git clone https://github.com/lateautumn233/android_kernel_docker --depth=1 docker
+        sed -i '$a\source "docker/Kconfig"' arch/arm64/Kconfig
 
     - name: 打入补充补丁
       run: |
