@@ -16,7 +16,7 @@ jobs:
       CCACHE_NOHASHDIR: "true"
       CCACHE_HARDLINK: "true"
     steps:
-    - name: 获取空间支持
+    - name: 获取编译镜像
       uses: easimon/maximize-build-space@master
       with:
           root-reserve-mb: 8192
@@ -26,35 +26,42 @@ jobs:
           remove-haskell: 'true'
           remove-codeql: 'true'
 
-    - name: 构建编译环境
+    - name: 安装编译工具
       run: |
         sudo apt-get update
         sudo apt install build-essential git curl wget bison flex zip bc cpio libssl-dev ccache
-        mkdir -p $GITHUB_WORKSPACE/kernel_workspace
 
-    - name: 下载proton-clang
+    - name: 配置编译环境
       run: |
-        cd /home/runner
+        cd $GITHUB_WORKSPACE
         mkdir proton-clang
         cd proton-clang
         wget https://github.com/kdrag0n/proton-clang/archive/refs/tags/20210522.zip
         unzip 20210522.zip
+        TOOLCHAIN_PATH=$GITHUB_WORKSPACE/proton-clang/proton-clang-20210522/bin
+        export PATH="$TOOLCHAIN_PATH:$PATH"
+        export CCACHE_DIR="$GITHUB_WORKSPACE/.cache/ccache_mikernel" 
+        export CC="ccache gcc"
+        export CXX="ccache g++"
+        export PATH="/usr/lib/ccache:$PATH"
+        export MAKE_ARGS="ARCH=arm64 SUBARCH=arm64 O=out CC=clang CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CROSS_COMPILE_COMPAT=arm-linux-gnueabi- CLANG_TRIPLE=aarch64-linux-gnu-"
         
-    - name: 下载内核源码
+    - name: 获取内核源码
       run: |
-        cd $GITHUB_WORKSPACE/kernel_workspace
+        mkdir -p $GITHUB_WORKSPACE
         git clone https://github.com/txmins/kernel_xiaomi_sm8250_mod -b android14-lineage21-mod android-kernel --depth=1
 
-    - name: 开启lxc和docker配置
+    - name: 开启补充配置
       run: |
-        cd $GITHUB_WORKSPACE/kernel_workspace
+        cd $GITHUB_WORKSPACE
         wget https://github.com/wu17481748/lxc-docker/releases/download/lxc-docker-2config/LXC-DOCKER-OPEN-CONFIG.sh
         chmod 777 LXC-DOCKER-OPEN-CONFIG.sh
         ./LXC-DOCKER-OPEN-CONFIG.sh android-kernel/arch/arm64/configs/alioth_defconfig -w
+        sed -i '/CONFIG_ANDROID_PARANOID_NETWORK/d' android-kernel/arch/arm64/configs/alioth_defconfig
 
-    - name: 打入lxc补丁
+    - name: 打入补充补丁
       run: |
-       cd $GITHUB_WORKSPACE/kernel_workspace
+       cd $GITHUB_WORKSPACE
        wget https://raw.githubusercontent.com/tomxi1997/lxc-docker-support-for-android/refs/heads/main/runcpatch.sh
        chmod a+x runcpatch.sh
        if [ -f android-kernel/kernel/cgroup.c ]; then
@@ -70,19 +77,37 @@ jobs:
          patch -p0 < lxc.patch
        fi
 
-    - name: 关闭ANDROID_PARANOID_NETWORK配置
+    - name: 开启KernelSU
       run: |
-        cd $GITHUB_WORKSPACE/kernel_workspace
-        sed -i '/CONFIG_ANDROID_PARANOID_NETWORK/d' android-kernel/arch/arm64/configs/alioth_defconfig
-        echo "# CONFIG_ANDROID_PARANOID_NETWORK is not set" >> android-kernel/arch/arm64/configs/alioth_defconfig
+        cd $GITHUB_WORKSPACE/android-kernel
+        curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s v0.9.5
+
+    - name: 开启Anykernel3
+      run: |
+        cd $GITHUB_WORKSPACE/android-kernel
+        GIT_COMMIT_ID=$(git rev-parse --short=8 HEAD)
+        git clone https://github.com/liyafe1997/AnyKernel3 -b kona --single-branch --depth=1 anykernel
+        local_version_str="-perf"
+        local_version_date_str="-$(date +%Y%m%d)-${GIT_COMMIT_ID}-xiaomuwu-perf"
+        sed -i "s/${local_version_str}/${local_version_date_str}/g" arch/arm64/configs/alioth_defconfig
 
     - name: 开始编译内核
       run: |
-        cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
-        bash build.sh alioth ksu
+        cd $GITHUB_WORKSPACE/android-kernel
+        make $MAKE_ARGS alioth_defconfig
+        scripts/config --file out/.config -e KSU
+        make $MAKE_ARGS -j$(nproc --all)
 
-    - name: 上传Upload AnyKernel3
+    - name: 复制生成文件
+      run: |
+        cd $GITHUB_WORKSPACE/android-kernel
+        rm -rf anykernel/kernels/
+        mkdir -p anykernel/kernels/
+        cp out/arch/arm64/boot/* anykernel/kernels/
+
+
+    - name: 上传打包文件
       uses: actions/upload-artifact@v3
       with:
         name: Lineageos_Kernel_Ksu_Docker_anykernel3
-        path: kernel_workspace/android-kernel/anykernel/*
+        path: $GITHUB_WORKSPACE/android-kernel/anykernel/*
