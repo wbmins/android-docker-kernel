@@ -63,10 +63,7 @@ jobs:
         chmod 777 LXC-DOCKER-OPEN-CONFIG.sh
         ./LXC-DOCKER-OPEN-CONFIG.sh android-kernel/arch/arm64/configs/alioth_defconfig -w
         sed -i '/CONFIG_ANDROID_PARANOID_NETWORK/d' android-kernel/arch/arm64/configs/alioth_defconfig
-        cd android-kernel
-        git clone https://github.com/lateautumn233/android_kernel_docker --depth=1 docker
-        sed -i '$a\source "docker/Kconfig"' arch/arm64/Kconfig
-        sed -i '$(obj)/config_data.gz: $(KCONFIG_CONFIG) FORCE' kernel/Makefile
+        sed -i '$(obj)/config_data.gz: $(KCONFIG_CONFIG) FORCE' android-kernel/kernel/Makefile
 
     - name: 打入补充补丁
       run: |
