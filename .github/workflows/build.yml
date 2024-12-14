@@ -53,8 +53,7 @@ jobs:
     - name: 获取内核源码
       run: |
         cd $GITHUB_WORKSPACE
-        git clone https://github.com/LineageOS/android_kernel_xiaomi_sm8250 -b lineage-21 android-kernel --depth=1
-        
+        git clone https://github.com/liyafe1997/kernel_xiaomi_sm8250_mod -b android14-lineage21-mod android-kernel --depth=1        
 
     - name: 开启补充配置
       run: |
