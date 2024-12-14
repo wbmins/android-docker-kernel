@@ -37,7 +37,7 @@ jobs:
       env:
           cache-name: cache-proton-clang
       with:
-        path: $GITHUB_WORKSPACE/proton-clang-20210522
+        path: proton-clang-20210522
         key: ${{ runner.os }}-${{ env.cache-name }}
         restore-keys: |
           ${{ runner.os }}-${{ env.cache-name }}
@@ -130,4 +130,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: Lineageos_Kernel_Ksu_Docker_anykernel3
-        path: $GITHUB_WORKSPACE/android-kernel/anykernel/
+        path: android-kernel/anykernel/*
