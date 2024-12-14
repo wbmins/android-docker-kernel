@@ -66,6 +66,7 @@ jobs:
         cd android-kernel
         git clone https://github.com/lateautumn233/android_kernel_docker --depth=1 docker
         sed -i '$a\source "docker/Kconfig"' arch/arm64/Kconfig
+        sed -i '$(obj)/config_data.gz: $(KCONFIG_CONFIG) FORCE' kernel/Makefile
 
     - name: 打入补充补丁
       run: |
@@ -78,11 +79,6 @@ jobs:
        
        if [ -f android-kernel/kernel/cgroup/cgroup.c ]; then
        ./runcpatch.sh android-kernel/kernel/cgroup/cgroup.c               
-       fi
-       
-       if [ -f android-kernel/net/netfilter/xt_qtaguid.c ]; then
-         wget https://github.com/wu17481748/lxc-docker/releases/download/lxc/lxc.patch
-         patch -p0 < lxc.patch
        fi
 
     - name: 开启KernelSU
