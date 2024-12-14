@@ -130,4 +130,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: Lineageos_Kernel_Ksu_Docker_anykernel3
-        path: $GITHUB_WORKSPACE/android-kernel/anykernel/*
+        path: $GITHUB_WORKSPACE/android-kernel/anykernel/
