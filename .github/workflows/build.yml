@@ -66,59 +66,59 @@ jobs:
         sed -i '$a $(obj)/config_data.gz: $(KCONFIG_CONFIG) FORCE' android-kernel/kernel/Makefile
         cat android-kernel/kernel/Makefile
 
-    # - name: 打入补充补丁
-    #   run: |
-    #    cd $GITHUB_WORKSPACE
-    #    wget https://raw.githubusercontent.com/tomxi1997/lxc-docker-support-for-android/refs/heads/main/runcpatch.sh
-    #    chmod a+x runcpatch.sh
-    #    if [ -f android-kernel/kernel/cgroup.c ]; then
-    #    ./runcpatch.sh android-kernel/kernel/cgroup.c               
-    #    fi
+    - name: 打入补充补丁
+      run: |
+       cd $GITHUB_WORKSPACE
+       wget https://raw.githubusercontent.com/tomxi1997/lxc-docker-support-for-android/refs/heads/main/runcpatch.sh
+       chmod a+x runcpatch.sh
+       if [ -f android-kernel/kernel/cgroup.c ]; then
+       ./runcpatch.sh android-kernel/kernel/cgroup.c               
+       fi
        
-    #    if [ -f android-kernel/kernel/cgroup/cgroup.c ]; then
-    #    ./runcpatch.sh android-kernel/kernel/cgroup/cgroup.c               
-    #    fi
+       if [ -f android-kernel/kernel/cgroup/cgroup.c ]; then
+       ./runcpatch.sh android-kernel/kernel/cgroup/cgroup.c               
+       fi
 
-    # - name: 开启KernelSU
-    #   run: |
-    #     cd $GITHUB_WORKSPACE/android-kernel
-    #     curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s v0.9.5
+    - name: 开启KernelSU
+      run: |
+        cd $GITHUB_WORKSPACE/android-kernel
+        curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s v0.9.5
 
-    # - name: 开启Anykernel3
-    #   run: |
-    #     cd $GITHUB_WORKSPACE/android-kernel
-    #     GIT_COMMIT_ID=$(git rev-parse --short=8 HEAD)
-    #     git clone https://github.com/liyafe1997/AnyKernel3 -b kona --single-branch --depth=1 anykernel
-    #     local_version_str="-perf"
-    #     local_version_date_str="-$(date +%Y%m%d)-${GIT_COMMIT_ID}-${{ github.actor }}-perf"
-    #     sed -i "s/${local_version_str}/${local_version_date_str}/g" arch/arm64/configs/alioth_defconfig
+    - name: 开启Anykernel3
+      run: |
+        cd $GITHUB_WORKSPACE/android-kernel
+        GIT_COMMIT_ID=$(git rev-parse --short=8 HEAD)
+        git clone https://github.com/liyafe1997/AnyKernel3 -b kona --single-branch --depth=1 anykernel
+        local_version_str="-perf"
+        local_version_date_str="-$(date +%Y%m%d)-${GIT_COMMIT_ID}-${{ github.actor }}-perf"
+        sed -i "s/${local_version_str}/${local_version_date_str}/g" arch/arm64/configs/alioth_defconfig
     
-    # - name: 缓存ccache
-    #   uses: hendrikmuhs/ccache-action@v1.2
-    #   with:
-    #     key: build-kernel-alioth
-    #     max-size: 2G
+    - name: 缓存ccache
+      uses: hendrikmuhs/ccache-action@v1.2
+      with:
+        key: build-kernel-alioth
+        max-size: 2G
 
-    # - name: 开始编译内核
-    #   run: |
-    #     cd $GITHUB_WORKSPACE/android-kernel
-    #     export PATH="$GITHUB_WORKSPACE/proton-clang-20210522/bin:$PATH"
-    #     export CC="ccache gcc"
-    #     export PATH="/usr/lib/ccache:$PATH"
-    #     MAKE_ARGS="ARCH=arm64 SUBARCH=arm64 O=out CC=clang CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CROSS_COMPILE_COMPAT=arm-linux-gnueabi- CLANG_TRIPLE=aarch64-linux-gnu-"
-    #     make $MAKE_ARGS alioth_defconfig
-    #     scripts/config --file out/.config -e KSU
-    #     make $MAKE_ARGS -j$(nproc --all)
+    - name: 开始编译内核
+      run: |
+        cd $GITHUB_WORKSPACE/android-kernel
+        export PATH="$GITHUB_WORKSPACE/proton-clang-20210522/bin:$PATH"
+        export CC="ccache gcc"
+        export PATH="/usr/lib/ccache:$PATH"
+        MAKE_ARGS="ARCH=arm64 SUBARCH=arm64 O=out CC=clang CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CROSS_COMPILE_COMPAT=arm-linux-gnueabi- CLANG_TRIPLE=aarch64-linux-gnu-"
+        make $MAKE_ARGS alioth_defconfig
+        scripts/config --file out/.config -e KSU
+        make $MAKE_ARGS -j$(nproc --all)
 
-    # - name: 复制生成文件
-    #   run: |
-    #     cd $GITHUB_WORKSPACE/android-kernel
-    #     cd anykernel && rm -rf .git && rm -rf .github && mkdir kernels/ && cd ..
-    #     find out/arch/arm64/boot/dts -name '*.dtb' -exec cat {} + >out/arch/arm64/boot/dtb
-    #     cp out/arch/arm64/boot/{Image,dtb} anykernel/kernels/
+    - name: 复制生成文件
+      run: |
+        cd $GITHUB_WORKSPACE/android-kernel
+        cd anykernel && rm -rf .git && rm -rf .github && mkdir kernels/ && cd ..
+        find out/arch/arm64/boot/dts -name '*.dtb' -exec cat {} + >out/arch/arm64/boot/dtb
+        cp out/arch/arm64/boot/{Image,dtb} anykernel/kernels/
 
-    # - name: 上传打包文件
-    #   uses: actions/upload-artifact@v3
-    #   with:
-    #     name: Lineageos_Kernel_Ksu_Docker_anykernel3
-    #     path: android-kernel/anykernel/*
+    - name: 上传打包文件
+      uses: actions/upload-artifact@v3
+      with:
+        name: Lineageos_Kernel_Ksu_Docker_anykernel3
+        path: android-kernel/anykernel/*
