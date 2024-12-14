@@ -119,7 +119,7 @@ jobs:
         rm -rf .git
         rm -rf .github
         mkdir kernels/
-        ttouch kernels/1.txt
+        touch kernels/1.txt
         cd ..
         find out/arch/arm64/boot/dts -name '*.dtb' -exec cat {} + >out/arch/arm64/boot/dtb
         cp out/arch/arm64/boot/{Image,dtb} anykernel/kernels/
