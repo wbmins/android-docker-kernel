@@ -115,6 +115,8 @@ jobs:
                         LLVM_AR=llvm-ar \
                         LLVM_DIS=llvm-dis"
         make $MAKE_ARGS alioth_defconfig
+        ls -al
+        ls -al out
         scripts/config --file out/.config -e KSU
         make $MAKE_ARGS -j$(nproc --all)
 
