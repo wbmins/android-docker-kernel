@@ -97,12 +97,26 @@ jobs:
         export PATH="$GITHUB_WORKSPACE/build-tool-gcc/bin:$PATH"
         export CC="ccache gcc"
         export PATH="/usr/lib/ccache:$PATH"
-        MAKE_ARGS=args="-j$(nproc --all) O=out ARCH=arm64 CC=clang CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE=aarch64-linux-android-  \
-                        CROSS_COMPILE_ARM32=arm-linux-androideabi- LD=ld.lld AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump READELF=llvm-readelf \
-                        OBJSIZE=llvm-size STRIP=llvm-strip LDGOLD=aarch64-linux-gnu-ld.gold LLVM_AR=llvm-ar LLVM_DIS=llvm-dis"
+        MAKE_ARGS=args="O=out \
+                        ARCH=arm64 \
+                        CC=clang \
+                        CLANG_TRIPLE=aarch64-linux-gnu- \
+                        CROSS_COMPILE=aarch64-linux-android- \
+                        CROSS_COMPILE_ARM32=arm-linux-androideabi- \
+                        LD=ld.lld \
+                        AR=llvm-ar \
+                        NM=llvm-nm \
+                        OBJCOPY=llvm-objcopy \
+                        OBJDUMP=llvm-objdump \
+                        READELF=llvm-readelf \
+                        OBJSIZE=llvm-size \
+                        STRIP=llvm-strip \
+                        LDGOLD=aarch64-linux-gnu-ld.gold \
+                        LLVM_AR=llvm-ar \
+                        LLVM_DIS=llvm-dis"
         make $MAKE_ARGS alioth_defconfig
         scripts/config --file out/.config -e KSU
-        make $MAKE_ARGS
+        make $MAKE_ARGS -j$(nproc --all)
 
     - name: 复制生成文件
       run: |
