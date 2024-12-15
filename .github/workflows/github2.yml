@@ -31,23 +31,23 @@ jobs:
         sudo apt-get update
         sudo apt install build-essential git curl wget bison flex zip bc cpio libssl-dev ccache
 
-    - name: 缓存gcc
-      id: cache-gcc
+    - name: 缓存编译工具
+      id: cache-build-tool
       uses: actions/cache@v3
       env:
-          cache-name: cache-gcc
+          cache-name: cache-build-tool
       with:
-        path: gcc
+        path: build-tool
         key: ${{ runner.os }}-${{ env.cache-name }}
         restore-keys: |
           ${{ runner.os }}-${{ env.cache-name }}
 
-    - if: ${{ steps.cache-gcc.outputs.cache-hit != 'true' }}
+    - if: ${{ steps.cache-build-tool.outputs.cache-hit != 'true' }}
       name: 配置编译环境
       continue-on-error: true
       run: |
         cd $GITHUB_WORKSPACE
-        git clone https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-gnu-9.3 -b lineage-21.0 gcc --depth=1
+        git clone https://github.com/LineageOS/android_prebuilts_clang_kernel_linux-x86_clang-r416183b -b lineage-20.0 build-tool --depth=1
 
     - name: 获取内核源码
       run: |
@@ -101,7 +101,7 @@ jobs:
     - name: 开始编译内核
       run: |
         cd $GITHUB_WORKSPACE/android-kernel
-        export PATH="$GITHUB_WORKSPACE/gcc/bin:$PATH"
+        export PATH="$GITHUB_WORKSPACE/build-tool/bin:$PATH"
         export CC="ccache gcc"
         export PATH="/usr/lib/ccache:$PATH"
         MAKE_ARGS="ARCH=arm64 SUBARCH=arm64 O=out CC=clang CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CROSS_COMPILE_COMPAT=arm-linux-gnueabi- CLANG_TRIPLE=aarch64-linux-gnu-"
