@@ -56,7 +56,6 @@ jobs:
         ./LXC-DOCKER-OPEN-CONFIG.sh android-kernel/arch/arm64/configs/alioth_defconfig -w
         sed -i '/CONFIG_ANDROID_PARANOID_NETWORK/d' android-kernel/arch/arm64/configs/alioth_defconfig
         sed -i '$a $(obj)/config_data.gz: $(KCONFIG_CONFIG) FORCE' android-kernel/kernel/Makefile
-        cat android-kernel/kernel/Makefile
 
     - name: 打入补充补丁
       run: |
@@ -84,12 +83,6 @@ jobs:
         local_version_str="-perf"
         local_version_date_str="-$(date +%Y%m%d)-${GIT_COMMIT_ID}-${{ github.actor }}-perf"
         sed -i "s/${local_version_str}/${local_version_date_str}/g" arch/arm64/configs/alioth_defconfig
-    
-    - name: 缓存ccache
-      uses: hendrikmuhs/ccache-action@v1.2
-      with:
-        key: build-kernel-alioth
-        max-size: 2G
 
     - name: 开始编译内核
       run: |

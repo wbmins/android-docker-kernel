@@ -63,7 +63,6 @@ jobs:
         ./LXC-DOCKER-OPEN-CONFIG.sh android-kernel/arch/arm64/configs/alioth_defconfig -w
         sed -i '/CONFIG_ANDROID_PARANOID_NETWORK/d' android-kernel/arch/arm64/configs/alioth_defconfig
         sed -i '$a $(obj)/config_data.gz: $(KCONFIG_CONFIG) FORCE' android-kernel/kernel/Makefile
-        cat android-kernel/kernel/Makefile
 
     - name: 打入补充补丁
       run: |
