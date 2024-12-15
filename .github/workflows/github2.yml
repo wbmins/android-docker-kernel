@@ -34,85 +34,85 @@ jobs:
         libsdl1.2-dev libssl-dev libxml2 libxml2-utils lzop pngcrush rsync \
         schedtool squashfs-tools xsltproc zip zlib1g-dev imagemagick
 
-    # - name: 配置编译环境
-    #   run: |
-    #     cd $GITHUB_WORKSPACE
-    #     git clone https://github.com/LineageOS/android_prebuilts_clang_kernel_linux-x86_clang-r416183b -b lineage-20.0 build-tool-clang --depth=1
-    #     git clone https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-gnu-9.3 -b lineage-21.0 build-tool-gcc --depth=1
+    - name: 配置编译环境
+      run: |
+        cd $GITHUB_WORKSPACE
+        git clone https://github.com/LineageOS/android_prebuilts_clang_kernel_linux-x86_clang-r416183b -b lineage-20.0 build-tool-clang --depth=1
+        git clone https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-gnu-9.3 -b lineage-21.0 build-tool-gcc --depth=1
 
 
-    # - name: 获取内核源码
-    #   run: |
-    #     cd $GITHUB_WORKSPACE
-    #     git clone https://github.com/LineageOS/android_kernel_xiaomi_sm8250 -b lineage-21 android-kernel --depth=1
-    #     cp android-kernel/arch/arm64/configs/vendor/xiaomi/alioth.config android-kernel/arch/arm64/configs/alioth_defconfig
+    - name: 获取内核源码
+      run: |
+        cd $GITHUB_WORKSPACE
+        git clone https://github.com/LineageOS/android_kernel_xiaomi_sm8250 -b lineage-21 android-kernel --depth=1
+        cp android-kernel/arch/arm64/configs/vendor/xiaomi/alioth.config android-kernel/arch/arm64/configs/alioth_defconfig
 
-    # - name: 开启补充配置
-    #   run: |
-    #     cd $GITHUB_WORKSPACE
-    #     wget https://github.com/wu17481748/lxc-docker/releases/download/lxc-docker-2config/LXC-DOCKER-OPEN-CONFIG.sh
-    #     chmod 777 LXC-DOCKER-OPEN-CONFIG.sh
-    #     ./LXC-DOCKER-OPEN-CONFIG.sh android-kernel/arch/arm64/configs/alioth_defconfig -w
-    #     sed -i '/CONFIG_ANDROID_PARANOID_NETWORK/d' android-kernel/arch/arm64/configs/alioth_defconfig
-    #     sed -i '$a $(obj)/config_data.gz: $(KCONFIG_CONFIG) FORCE' android-kernel/kernel/Makefile
-    #     cat android-kernel/kernel/Makefile
+    - name: 开启补充配置
+      run: |
+        cd $GITHUB_WORKSPACE
+        wget https://github.com/wu17481748/lxc-docker/releases/download/lxc-docker-2config/LXC-DOCKER-OPEN-CONFIG.sh
+        chmod 777 LXC-DOCKER-OPEN-CONFIG.sh
+        ./LXC-DOCKER-OPEN-CONFIG.sh android-kernel/arch/arm64/configs/alioth_defconfig -w
+        sed -i '/CONFIG_ANDROID_PARANOID_NETWORK/d' android-kernel/arch/arm64/configs/alioth_defconfig
+        sed -i '$a $(obj)/config_data.gz: $(KCONFIG_CONFIG) FORCE' android-kernel/kernel/Makefile
+        cat android-kernel/kernel/Makefile
 
-    # - name: 打入补充补丁
-    #   run: |
-    #    cd $GITHUB_WORKSPACE
-    #    wget https://raw.githubusercontent.com/tomxi1997/lxc-docker-support-for-android/refs/heads/main/runcpatch.sh
-    #    chmod a+x runcpatch.sh
-    #    if [ -f android-kernel/kernel/cgroup.c ]; then
-    #    ./runcpatch.sh android-kernel/kernel/cgroup.c               
-    #    fi
+    - name: 打入补充补丁
+      run: |
+       cd $GITHUB_WORKSPACE
+       wget https://raw.githubusercontent.com/tomxi1997/lxc-docker-support-for-android/refs/heads/main/runcpatch.sh
+       chmod a+x runcpatch.sh
+       if [ -f android-kernel/kernel/cgroup.c ]; then
+       ./runcpatch.sh android-kernel/kernel/cgroup.c               
+       fi
        
-    #    if [ -f android-kernel/kernel/cgroup/cgroup.c ]; then
-    #    ./runcpatch.sh android-kernel/kernel/cgroup/cgroup.c               
-    #    fi
+       if [ -f android-kernel/kernel/cgroup/cgroup.c ]; then
+       ./runcpatch.sh android-kernel/kernel/cgroup/cgroup.c               
+       fi
 
-    # - name: 开启KernelSU
-    #   run: |
-    #     cd $GITHUB_WORKSPACE/android-kernel
-    #     curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s v0.9.5
+    - name: 开启KernelSU
+      run: |
+        cd $GITHUB_WORKSPACE/android-kernel
+        curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s v0.9.5
 
-    # - name: 开启Anykernel3
-    #   run: |
-    #     cd $GITHUB_WORKSPACE/android-kernel
-    #     GIT_COMMIT_ID=$(git rev-parse --short=8 HEAD)
-    #     git clone https://github.com/liyafe1997/AnyKernel3 -b kona --single-branch --depth=1 anykernel
-    #     local_version_str="-perf"
-    #     local_version_date_str="-$(date +%Y%m%d)-${GIT_COMMIT_ID}-${{ github.actor }}-perf"
-    #     sed -i "s/${local_version_str}/${local_version_date_str}/g" arch/arm64/configs/alioth_defconfig
+    - name: 开启Anykernel3
+      run: |
+        cd $GITHUB_WORKSPACE/android-kernel
+        GIT_COMMIT_ID=$(git rev-parse --short=8 HEAD)
+        git clone https://github.com/liyafe1997/AnyKernel3 -b kona --single-branch --depth=1 anykernel
+        local_version_str="-perf"
+        local_version_date_str="-$(date +%Y%m%d)-${GIT_COMMIT_ID}-${{ github.actor }}-perf"
+        sed -i "s/${local_version_str}/${local_version_date_str}/g" arch/arm64/configs/alioth_defconfig
     
-    # - name: 缓存ccache
-    #   uses: hendrikmuhs/ccache-action@v1.2
-    #   with:
-    #     key: build-kernel-alioth
-    #     max-size: 2G
+    - name: 缓存ccache
+      uses: hendrikmuhs/ccache-action@v1.2
+      with:
+        key: build-kernel-alioth
+        max-size: 2G
 
-    # - name: 开始编译内核
-    #   run: |
-    #     cd $GITHUB_WORKSPACE/android-kernel
-    #     export PATH="$GITHUB_WORKSPACE/build-tool-clang/bin:$PATH"
-    #     export PATH="$GITHUB_WORKSPACE/build-tool-gcc/bin:$PATH"
-    #     export CC="ccache gcc"
-    #     export PATH="/usr/lib/ccache:$PATH"
-    #     MAKE_ARGS=args="-j$(nproc --all) O=out ARCH=arm64 CC=clang CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE=aarch64-linux-android-  \
-    #                     CROSS_COMPILE_ARM32=arm-linux-androideabi- LD=ld.lld AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump READELF=llvm-readelf \
-    #                     OBJSIZE=llvm-size STRIP=llvm-strip LDGOLD=aarch64-linux-gnu-ld.gold LLVM_AR=llvm-ar LLVM_DIS=llvm-dis"
-    #     make $MAKE_ARGS alioth_defconfig
-    #     scripts/config --file out/.config -e KSU
-    #     make $MAKE_ARGS
+    - name: 开始编译内核
+      run: |
+        cd $GITHUB_WORKSPACE/android-kernel
+        export PATH="$GITHUB_WORKSPACE/build-tool-clang/bin:$PATH"
+        export PATH="$GITHUB_WORKSPACE/build-tool-gcc/bin:$PATH"
+        export CC="ccache gcc"
+        export PATH="/usr/lib/ccache:$PATH"
+        MAKE_ARGS=args="-j$(nproc --all) O=out ARCH=arm64 CC=clang CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE=aarch64-linux-android-  \
+                        CROSS_COMPILE_ARM32=arm-linux-androideabi- LD=ld.lld AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump READELF=llvm-readelf \
+                        OBJSIZE=llvm-size STRIP=llvm-strip LDGOLD=aarch64-linux-gnu-ld.gold LLVM_AR=llvm-ar LLVM_DIS=llvm-dis"
+        make $MAKE_ARGS alioth_defconfig
+        scripts/config --file out/.config -e KSU
+        make $MAKE_ARGS
 
-    # - name: 复制生成文件
-    #   run: |
-    #     cd $GITHUB_WORKSPACE/android-kernel
-    #     cd anykernel && rm -rf .git && rm -rf .github && mkdir kernels/ && cd ..
-    #     find out/arch/arm64/boot/dts -name '*.dtb' -exec cat {} + >out/arch/arm64/boot/dtb
-    #     cp out/arch/arm64/boot/{Image,dtb} anykernel/kernels/
+    - name: 复制生成文件
+      run: |
+        cd $GITHUB_WORKSPACE/android-kernel
+        cd anykernel && rm -rf .git && rm -rf .github && mkdir kernels/ && cd ..
+        find out/arch/arm64/boot/dts -name '*.dtb' -exec cat {} + >out/arch/arm64/boot/dtb
+        cp out/arch/arm64/boot/{Image,dtb} anykernel/kernels/
 
-    # - name: 上传打包文件
-    #   uses: actions/upload-artifact@v3
-    #   with:
-    #     name: Lineageos_Kernel_Ksu_Docker_anykernel3
-    #     path: android-kernel/anykernel/*
+    - name: 上传打包文件
+      uses: actions/upload-artifact@v3
+      with:
+        name: Lineageos_Kernel_Ksu_Docker_anykernel3
+        path: android-kernel/anykernel/*
