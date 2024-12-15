@@ -93,10 +93,9 @@ jobs:
     - name: 开始编译内核
       run: |
         cd $GITHUB_WORKSPACE/android-kernel
-        export PATH="$GITHUB_WORKSPACE/build-tool-clang/bin:$PATH"
-        export PATH="$GITHUB_WORKSPACE/build-tool-gcc/bin:$PATH"
-        export CC="ccache gcc"
-        export PATH="/usr/lib/ccache:$PATH"
+        export PATH="$GITHUB_WORKSPACE/build-tool-clang/bin:$GITHUB_WORKSPACE/build-tool-gcc/bin:$PATH"
+        # export CC="ccache gcc"
+        # export PATH="/usr/lib/ccache:$PATH"
         # 编译参数参考 https://juejin.cn/post/7302805039449423881#heading-20
         MAKE_ARGS=args="O=out \
                         ARCH=arm64 \
