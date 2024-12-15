@@ -98,22 +98,14 @@ jobs:
         export CC="ccache gcc"
         export PATH="/usr/lib/ccache:$PATH"
         # 编译参数参考 https://juejin.cn/post/7302805039449423881#heading-20
-        MAKE_ARGS=args="O=out \
-                        ARCH=arm64 \
+        MAKE_ARGS=args="ARCH=arm64 \
+                        SUBARCH=arm64 \
+                        O=out \
                         CC=clang \
-                        CLANG_TRIPLE=aarch64-linux-gnu- \
-                        CROSS_COMPILE=aarch64-linux-android- \
-                        CROSS_COMPILE_ARM32=arm-linux-androideabi- \
-                        AR=llvm-ar \
-                        NM=llvm-nm \
-                        OBJCOPY=llvm-objcopy \
-                        OBJDUMP=llvm-objdump \
-                        READELF=llvm-readelf \
-                        OBJSIZE=llvm-size \
-                        STRIP=llvm-strip \
-                        LDGOLD=aarch64-linux-gnu-ld.gold \
-                        LLVM_AR=llvm-ar \
-                        LLVM_DIS=llvm-dis"
+                        CROSS_COMPILE=aarch64-linux-gnu- \
+                        CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+                        CROSS_COMPILE_COMPAT=arm-linux-gnueabi- \
+                        CLANG_TRIPLE=aarch64-linux-gnu-"
         make $MAKE_ARGS alioth_defconfig
         scripts/config --file .config -e KSU
         make $MAKE_ARGS -j$(nproc --all)
