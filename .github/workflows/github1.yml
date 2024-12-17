@@ -117,8 +117,7 @@ jobs:
 
     - name: 复制生成文件
       run: |
-        cd $GITHUB_WORKSPACE/android-kernel
-        cd anykernel && \
+        cd $GITHUB_WORKSPACE/android-kernel/anykernel && \
         rm -rf .git && \
         rm -rf .github && \
         mkdir kernels/ && \
