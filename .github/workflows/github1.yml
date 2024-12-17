@@ -66,16 +66,16 @@ jobs:
 
     - name: 打入补充补丁
       run: |
-       cd $GITHUB_WORKSPACE
-       wget https://raw.githubusercontent.com/tomxi1997/lxc-docker-support-for-android/refs/heads/main/runcpatch.sh
-       chmod a+x runcpatch.sh
-       if [ -f android-kernel/kernel/cgroup.c ]; then
-       ./runcpatch.sh android-kernel/kernel/cgroup.c               
-       fi
-       
-       if [ -f android-kernel/kernel/cgroup/cgroup.c ]; then
-       ./runcpatch.sh android-kernel/kernel/cgroup/cgroup.c               
-       fi
+        cd $GITHUB_WORKSPACE
+        wget https://raw.githubusercontent.com/tomxi1997/lxc-docker-support-for-android/refs/heads/main/runcpatch.sh
+        chmod a+x runcpatch.sh
+        if [ -f android-kernel/kernel/cgroup.c ]; then
+        ./runcpatch.sh android-kernel/kernel/cgroup.c               
+        fi
+        
+        if [ -f android-kernel/kernel/cgroup/cgroup.c ]; then
+        ./runcpatch.sh android-kernel/kernel/cgroup/cgroup.c               
+        fi
 
     - name: 开启KernelSU
       run: |
