@@ -103,7 +103,14 @@ jobs:
         export PATH="$GITHUB_WORKSPACE/proton-clang-20210522/bin:$PATH"
         export CC="ccache gcc"
         export PATH="/usr/lib/ccache:$PATH"
-        MAKE_ARGS="ARCH=arm64 SUBARCH=arm64 O=out CC=clang CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CROSS_COMPILE_COMPAT=arm-linux-gnueabi- CLANG_TRIPLE=aarch64-linux-gnu-"
+        MAKE_ARGS="ARCH=arm64 \
+                   SUBARCH=arm64 \
+                   O=out \
+                   CC=clang \
+                   CROSS_COMPILE=aarch64-linux-gnu- \
+                   CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+                   CROSS_COMPILE_COMPAT=arm-linux-gnueabi- \
+                   CLANG_TRIPLE=aarch64-linux-gnu-"
         make $MAKE_ARGS alioth_defconfig
         scripts/config --file out/.config -e KSU
         make $MAKE_ARGS -j$(nproc --all)
@@ -111,7 +118,11 @@ jobs:
     - name: 复制生成文件
       run: |
         cd $GITHUB_WORKSPACE/android-kernel
-        cd anykernel && rm -rf .git && rm -rf .github && mkdir kernels/ && cd ..
+        cd anykernel && \
+        rm -rf .git && \
+        rm -rf .github && \
+        mkdir kernels/ && \
+        cd ..
         find out/arch/arm64/boot/dts -name '*.dtb' -exec cat {} + >out/arch/arm64/boot/dtb
         cp out/arch/arm64/boot/{Image,dtb} anykernel/kernels/
 
