@@ -98,7 +98,7 @@ jobs:
         export PATH="$GITHUB_WORKSPACE/proton-clang-20210522/bin:$PATH"
         export CC="ccache gcc"
         export PATH="/usr/lib/ccache:$PATH"
-        ${CROSS_COMPILE}ld -v
+        aarch64-linux-gnu-ld -v
         MAKE_ARGS=args="ARCH=arm64 \
                         SUBARCH=arm64 \
                         O=out \
