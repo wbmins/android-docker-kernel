@@ -113,8 +113,11 @@ jobs:
 
     - name: 复制生成文件
       run: |
-        cd $GITHUB_WORKSPACE/android-kernel
-        cd anykernel && rm -rf .git && rm -rf .github && mkdir kernels/ && cd ..
+        cd $GITHUB_WORKSPACE/android-kernel/anykernel && \
+        rm -rf .git && \
+        rm -rf .github && \
+        mkdir kernels/ && \
+        cd ..
         find out/arch/arm64/boot/dts -name '*.dtb' -exec cat {} + >out/arch/arm64/boot/dtb
         cp out/arch/arm64/boot/{Image,dtb} anykernel/kernels/
 
