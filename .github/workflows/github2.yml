@@ -98,7 +98,6 @@ jobs:
         export PATH="$GITHUB_WORKSPACE/proton-clang-20210522/bin:$PATH"
         export CC="ccache gcc"
         export PATH="/usr/lib/ccache:$PATH"
-        aarch64-linux-gnu-ld -v
         MAKE_ARGS=args="ARCH=arm64 \
                         SUBARCH=arm64 \
                         O=out \
@@ -106,7 +105,12 @@ jobs:
                         CROSS_COMPILE=aarch64-linux-gnu- \
                         CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
                         CROSS_COMPILE_COMPAT=arm-linux-gnueabi- \
-                        CLANG_TRIPLE=aarch64-linux-gnu-"
+                        CLANG_TRIPLE=aarch64-linux-gnu-" \
+                        AR=llvm-ar \
+                        NM=llvm-nm \
+                        OBJCOPY=llvm-objcopy \
+                        OBJDUMP=llvm-objdump \
+                        STRIP=llvm-strip
         make $MAKE_ARGS alioth_defconfig
         # scripts/config --file .config -e KSU
         make $MAKE_ARGS -j$(nproc --all)
