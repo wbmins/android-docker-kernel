@@ -80,7 +80,7 @@ jobs:
     - name: 开启KernelSU
       run: |
         cd $GITHUB_WORKSPACE/android-kernel
-        curl -LSs "https://raw.githubusercontent.com/wbmins/android-docker-kernel/main/setup.sh" | bash -s v0.9.5
+        curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s v0.9.5
 
     - name: 开启Anykernel3
       run: |
