@@ -31,24 +31,11 @@ jobs:
         sudo apt-get update
         sudo apt install build-essential git curl wget bison flex zip bc cpio libssl-dev ccache -y
 
-    - name: 缓存proton-clang
-      id: cache-proton-clang
-      uses: actions/cache@v3
-      env:
-          cache-name: cache-proton-clang
-      with:
-        path: proton-clang-20210522
-        key: ${{ runner.os }}-${{ env.cache-name }}
-        restore-keys: |
-          ${{ runner.os }}-${{ env.cache-name }}
-
-    - if: ${{ steps.cache-proton-clang.outputs.cache-hit != 'true' }}
-      name: 配置编译环境
-      continue-on-error: true
+    - name: 配置编译环境
       run: |
         cd $GITHUB_WORKSPACE
-        wget https://github.com/kdrag0n/proton-clang/archive/refs/tags/20210522.zip
-        unzip 20210522.zip
+        wget https://github.com/ZyCromerZ/Clang/releases/download/21.0.0git-20250211-release/Clang-21.0.0git-20250211.tar.gz
+        tar -xvf Clang-21.0.0git-20250211.tar.gz
 
     - name: 获取内核源码
       run: |
@@ -90,7 +77,7 @@ jobs:
     - name: 开始编译内核
       run: |
         cd $GITHUB_WORKSPACE/android-kernel
-        export PATH="$GITHUB_WORKSPACE/proton-clang-20210522/bin:$PATH"
+        export PATH="$GITHUB_WORKSPACE/Clang-21.0.0git-20250211/bin:$PATH"
         export CC="ccache gcc"
         export PATH="/usr/lib/ccache:$PATH"
         MAKE_ARGS="ARCH=arm64 \
