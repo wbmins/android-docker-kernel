@@ -34,8 +34,8 @@ jobs:
     - name: 配置编译环境
       run: |
         cd $GITHUB_WORKSPACE
-        wget https://github.com/ZyCromerZ/Clang/releases/download/21.0.0git-20250211-release/Clang-21.0.0git-20250211.tar.gz
-        tar -xvf Clang-21.0.0git-20250211.tar.gz
+        wget https://github.com/ZyCromerZ/Clang/releases/download/20.0.0git-20250129-release/Clang-20.0.0git-20250129.tar.gz
+        tar -xvf Clang-20.0.0git-20250129.tar.gz
 
     - name: 获取内核源码
       run: |
@@ -77,7 +77,7 @@ jobs:
     - name: 开始编译内核
       run: |
         cd $GITHUB_WORKSPACE/android-kernel
-        export PATH="$GITHUB_WORKSPACE/Clang-21.0.0git-20250211/bin:$PATH"
+        export PATH="$GITHUB_WORKSPACE/Clang-20.0.0git-20250129/bin:$PATH"
         export CC="ccache gcc"
         export PATH="/usr/lib/ccache:$PATH"
         MAKE_ARGS="ARCH=arm64 \
