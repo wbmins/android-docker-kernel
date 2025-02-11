@@ -77,10 +77,10 @@ jobs:
         ./runcpatch.sh android-kernel/kernel/cgroup/cgroup.c               
         fi
 
-    - name: 开启KernelSU
-      run: |
-        cd $GITHUB_WORKSPACE/android-kernel
-        curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s v0.9.5
+    # - name: 开启KernelSU
+    #   run: |
+    #     cd $GITHUB_WORKSPACE/android-kernel
+    #     curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s v0.9.5
 
     - name: 开启Anykernel3
       run: |
@@ -112,7 +112,8 @@ jobs:
                    CROSS_COMPILE_COMPAT=arm-linux-gnueabi- \
                    CLANG_TRIPLE=aarch64-linux-gnu-"
         make $MAKE_ARGS alioth_defconfig
-        scripts/config --file out/.config -e KSU
+        # scripts/config --file out/.config -e KSU
+        scripts/config --file out/.config
         make $MAKE_ARGS -j$(nproc --all)
 
     - name: 复制生成文件
