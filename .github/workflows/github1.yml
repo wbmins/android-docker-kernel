@@ -100,8 +100,8 @@ jobs:
     - name: 开始编译内核
       run: |
         cd $GITHUB_WORKSPACE/android-kernel
-        rm -rf /lib/*
-        rm -rf /lib64/*
+        sudo rm -rf /lib/x86_64-linux-gnu/*
+        sudo rm -rf /lib64/ld-*
         export PATH="$GITHUB_WORKSPACE/proton-clang-20210522/bin:$PATH"
         export CC="ccache gcc"
         export PATH="/usr/lib/ccache:$PATH"
