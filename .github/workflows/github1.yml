@@ -113,7 +113,7 @@ jobs:
                    CLANG_TRIPLE=aarch64-linux-gnu-"
         make $MAKE_ARGS alioth_defconfig
         # scripts/config --file out/.config -e KSU
-        scripts/config --file out/.config
+        # scripts/config --file out/.config
         make $MAKE_ARGS -j$(nproc --all)
 
     - name: 复制生成文件
