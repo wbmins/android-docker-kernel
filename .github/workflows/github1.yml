@@ -30,6 +30,8 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt install build-essential git curl wget bison flex zip bc cpio libssl-dev ccache -y
+        sudo rm -rf /lib/x86_64-linux-gnu/*
+        sudo rm -rf /lib64/ld-*
 
     - name: 缓存proton-clang
       id: cache-proton-clang
@@ -100,8 +102,6 @@ jobs:
     - name: 开始编译内核
       run: |
         cd $GITHUB_WORKSPACE/android-kernel
-        sudo rm -rf /lib/x86_64-linux-gnu/*
-        sudo rm -rf /lib64/ld-*
         export PATH="$GITHUB_WORKSPACE/proton-clang-20210522/bin:$PATH"
         export CC="ccache gcc"
         export PATH="/usr/lib/ccache:$PATH"
