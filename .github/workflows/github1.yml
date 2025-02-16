@@ -30,6 +30,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt install git curl wget bison flex zip bc cpio libssl-dev ccache -y
+        sudo apt-get autoremove binutils -y
 
     - name: 缓存proton-clang
       id: cache-proton-clang
