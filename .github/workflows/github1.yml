@@ -29,7 +29,7 @@ jobs:
     - name: 安装编译工具
       run: |
         sudo apt-get update
-        sudo apt install build-essential git curl wget bison flex zip bc cpio libssl-dev ccache -y
+        sudo apt install git curl wget bison flex zip bc cpio libssl-dev ccache -y
 
     - name: 缓存proton-clang
       id: cache-proton-clang
