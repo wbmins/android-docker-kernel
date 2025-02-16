@@ -30,8 +30,6 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt install build-essential git curl wget bison flex zip bc cpio libssl-dev ccache -y
-        sudo rm -rf /lib/x86_64-linux-gnu/*
-        sudo rm -rf /lib64/ld-*
 
     - name: 缓存proton-clang
       id: cache-proton-clang
